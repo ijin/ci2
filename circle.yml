@@ -1,0 +1,41 @@
+general:
+  branches:
+    only:
+      - /dev.*/
+      - /qa_.*/
+    ignore:
+      - master
+
+machine:
+  python:
+    version: 2.7.10
+  environment:
+
+dependencies:
+  pre:
+
+test:
+  override:
+    - echo "unit test"
+  post:
+    - git branch
+    #- if qa branch e2ec
+
+
+deployment:
+  develop:
+    branch: /dev.*/
+    commands:
+      - git branch | grep qa_${CIRCLE_BRANCH} ; RESULT=$? ; if [ "$RESULT" -eq 0 ] ; then git branch -D qa_${CIRCLE_BRANCH} ; fi
+      - git checkout -b qa_${CIRCLE_BRANCH}
+      - git branch
+        #- git push -f origin qa_${CIRCLE_BRANCH}
+        #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden UnitTest passed' -h qa_${CIRCLE_BRANCH}; fi
+
+  staging:
+    branch: /qa_.*/
+    commands:
+      #- cd src ; python install.py
+      - echo 'send pullrequest to master'
+      - echo 'OK!'
+        #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden IntegrationTest passed' ; fi
