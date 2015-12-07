@@ -19,7 +19,7 @@ test:
     - echo "unit test"
   post:
     - git branch
-    #- if qa branch e2ec
+    - echo `git rev-parse --abbrev-ref HEAD` | grep qa_ && echo 'qa branch. E2E test ' || echo 'no E2E test'
 
 
 deployment:
