@@ -29,7 +29,7 @@ deployment:
       - git branch | grep qa_${CIRCLE_BRANCH} ; RESULT=$? ; if [ "$RESULT" -eq 0 ] ; then git branch -D qa_${CIRCLE_BRANCH} ; fi
       - git checkout -b qa_${CIRCLE_BRANCH}
       - git branch
-        #- git push -f origin qa_${CIRCLE_BRANCH}
+      - git push -f origin qa_${CIRCLE_BRANCH}
         #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden UnitTest passed' -h qa_${CIRCLE_BRANCH}; fi
 
   staging:
