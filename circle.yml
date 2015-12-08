@@ -17,7 +17,7 @@ dependencies:
     - hub-${HUB}
   post:
     - mkdir -p hub-${HUB}
-    - if hub --version; then echo 'hub installed...';  else wget https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz; tar xvfz hub-linux-amd-64-${HUB}.tgz -C hub-${HUB} --strip-components 1; cp hub-${HUB}/bin/hub /usr/local/bin/; fi
+    - if hub --version; then echo 'hub installed...';  else wget https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz; tar xvfz hub-linux-amd64-${HUB}.tgz -C hub-${HUB} --strip-components 1; cp hub-${HUB}/bin/hub /usr/local/bin/; fi
     - hub --version
 
 test:
