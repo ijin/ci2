@@ -10,16 +10,30 @@ machine:
   python:
     version: 2.7.10
   environment:
+    HUB: 2.2.2
+    HUB_HOME: /home/ubuntu/hub-${HUB}
+    PATH: ${HUB_HOME}/bin:$PATH
 
 dependencies:
+  cache_directories:
+    - ${HUB_HOME}
   pre:
+    - |
+      mkdir -p ${HUB_HOME}
+      if hub version; then
+          echo 'hub installed...'
+      else curl -L https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz -o /tmp/HUB.tgz
+      tar xvfz /tmp/HUB.tgz -C ${HUB_HOME} --strip-components 1
+      fi
+    - hub version
 
 test:
   override:
+    - env
     - echo "unit test"
   post:
     - git branch
-    #- if qa branch e2ec
+    - echo `git rev-parse --abbrev-ref HEAD` | grep -q qa_ && echo 'qa branch. E2E test ' || echo 'no E2E test'
 
 
 deployment:
@@ -29,7 +43,7 @@ deployment:
       - git branch | grep qa_${CIRCLE_BRANCH} ; RESULT=$? ; if [ "$RESULT" -eq 0 ] ; then git branch -D qa_${CIRCLE_BRANCH} ; fi
       - git checkout -b qa_${CIRCLE_BRANCH}
       - git branch
-        #- git push -f origin qa_${CIRCLE_BRANCH}
+      - git push -f origin qa_${CIRCLE_BRANCH}
         #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden UnitTest passed' -h qa_${CIRCLE_BRANCH}; fi
 
   staging:
@@ -37,5 +51,4 @@ deployment:
     commands:
       #- cd src ; python install.py
       - echo 'send pullrequest to master'
-      - echo 'OK!'
-        #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden IntegrationTest passed' ; fi
+      - if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else hub pull-request -m 'One-garden IntegrationTest passed' ; fi
