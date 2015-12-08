@@ -20,12 +20,12 @@ dependencies:
   pre:
     - |
       mkdir -p $HUB_HOME
-      if hub --version; then
+      if hub version; then
           echo 'hub installed...'
       else curl -L https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz -o /tmp/HUB.tgz
       tar xvfz /tmp/HUB.tgz -C $HUB_HOME --strip-components 1
       fi
-    - hub --version
+    - hub version
 
 test:
   override:
