@@ -10,6 +10,7 @@ machine:
   python:
     version: 2.7.10
   environment:
+    QA_TRIGGER: \[do qa\]
     HUB: 2.2.2
     HUB_HOME: /home/ubuntu/hub-${HUB}
     PATH: ${HUB_HOME}/bin:$PATH
@@ -43,12 +44,16 @@ deployment:
       - git branch | grep qa_${CIRCLE_BRANCH} ; RESULT=$? ; if [ "$RESULT" -eq 0 ] ; then git branch -D qa_${CIRCLE_BRANCH} ; fi
       - git checkout -b qa_${CIRCLE_BRANCH}
       - git branch
-      - git push -f origin qa_${CIRCLE_BRANCH}
+      #- git push -f origin qa_${CIRCLE_BRANCH}
+      - git log -1 --pretty="%s" | grep -E "$QA_TRIGGER" && git push -f origin qa_${CIRCLE_BRANCH} || echo 'no qa'
         #- if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else /home/ubuntu/.hub/bin/hub pull-request -m 'One-garden UnitTest passed' -h qa_${CIRCLE_BRANCH}; fi
-
   staging:
     branch: /qa_.*/
     commands:
       #- cd src ; python install.py
-      - echo 'send pullrequest to master'
+      - echo 'deploying to qa && send pullrequest to master'
       - if [ -n "$CI_PULL_REQUESTS" ]; then echo 'ALREADY SENT PULL REQUEST' ; else hub pull-request -m 'One-garden IntegrationTest passed' ; fi
+  production:
+    branch: master
+    commands:
+      - echo 'deploying to master'
