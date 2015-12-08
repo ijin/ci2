@@ -11,15 +11,16 @@ machine:
     version: 2.7.10
   environment:
     HUB: 2.2.2
-    HUB_HOME: ~/hub-$HUB
+    HUB_HOME: /home/ubuntu/hub-$HUB
     PATH: $HUB_HOME/bin:$PATH
 
 dependencies:
   cache_directories:
     - $HUB_HOME
   post:
-    - mkdir -p $HUB_HOME
-    - if hub --version; then echo 'hub installed...';  else curl -L https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz -o HUB.tgz ; tar xvfz HUB.tgz -C $HUB_HOME --strip-components 1; fi
+    - |
+      mkdir -p $HUB_HOME
+      if hub --version; then echo 'hub installed...';  else curl -L https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz -o /tmp/HUB.tgz ; tar xvfz /tmp/HUB.tgz -C $HUB_HOME --strip-components 1; fi
     - env
     - ls -alh
     - hub --version
