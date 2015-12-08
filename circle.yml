@@ -20,6 +20,8 @@ dependencies:
   post:
     - mkdir -p $HUB_HOME
     - if hub --version; then echo 'hub installed...';  else curl -L https://github.com/github/hub/releases/download/v${HUB}/hub-linux-amd64-${HUB}.tgz -o HUB.tgz ; tar xvfz HUB.tgz -C $HUB_HOME --strip-components 1; fi
+    - env
+    - ls -alh
     - hub --version
 
 test:
